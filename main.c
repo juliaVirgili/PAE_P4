@@ -17,6 +17,7 @@ int main(void)
 {
 	pthread_t tid, jid;
 	uint8_t tmp;
+	int i;
 
 	//Init semaphores for TX data handshake
 	//inicialitza els dos objectes semàfor amb el valor 0, en vermell
