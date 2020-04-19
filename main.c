@@ -17,10 +17,9 @@ int main(void)
 {
 	pthread_t tid, jid;
 	uint8_t tmp;
-	int i, j;
 
 	//Init semaphores for TX data handshake
-	//inicialitza els dos objectes semàfor amb el valor 0, en vermell
+	//inicialitza els dos objectes semï¿½for amb el valor 0, en vermell
 	sem_init(&sem_tx_msp, 0, 0);
 	sem_init(&sem_tx_cli, 0, 0);
 
@@ -28,12 +27,12 @@ int main(void)
 	init_queue();
 
 	//Start thread for dynamixel module emulation
-	pthread_create(&tid, NULL, dyn_emu, (void*) &tid); //crea fil per simular la comunicació amsb els mòduls dynamixel
+	pthread_create(&tid, NULL, dyn_emu, (void*) &tid); //crea fil per simular la comunicaciï¿½ amsb els mï¿½duls dynamixel
 	pthread_create(&jid, NULL, joystick_emu, (void*) &jid); //amb el joystick
 
 	//Testing some high level function
 	printf("Setting LED to 0 \n");
-    dyn_led_control(1, 0); //estableix en el mòdul amb id (primer paràmetre) el valor del segon paràmetre
+    dyn_led_control(1, 0); //estableix en el mï¿½dul amb id (primer parï¿½metre) el valor del segon parï¿½metre
     printf("Getting LED value \n");
     dyn_led_read(1, &tmp); //llegeix el valor del Led i el desa en tmp
     assert(tmp == 0);
@@ -53,7 +52,7 @@ int main(void)
 	while(estado != Quit)
 	{
 		/*
-		 * Actualitza el valor de les variables d'estat segons l'última
+		 * Actualitza el valor de les variables d'estat segons l'ï¿½ltima
 		 * tecla clicada (simulant joystick i botons)
 		 */
 		Get_estado(&estado, &estado_anterior);
