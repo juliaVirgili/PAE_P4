@@ -73,8 +73,10 @@ struct RxReturn RxPacket(void) {
 
 	respuesta.time_out = false;
 	respuesta.idx = 0;
+	respuesta.tx_err = false;
 	f_Sentit_Dades_Rx();   //Ponemos la linea half duplex en Rx
 	f_Activa_Timer_TimeOut();
+	// Llegeix byte a byte de la cua ho va introduint a l'StatusPacket
 	for (bCount = 0; bCount < 4; bCount++) {
 		f_rx_uart_byte(&respuesta);
 	} //fin del for
@@ -83,8 +85,17 @@ struct RxReturn RxPacket(void) {
 			f_rx_uart_byte(&respuesta);
 		} //fin del for
 	}
-	//TODO: Decode packet and verify checksum
-
+	//TODO: Decode packet and saber si s'ha de fer algo amb idx
+	byte bCheckSum = 0;
+	if (!respuesta.time_out) { // Si no s'ha esgotat el time out d'aquesta instrucció durant la recepció
+		byte bLenght = respuesta.StatusPacket[3] + 3;
+		for (bCount = 2; bCount < bLenght; bCount++) {
+			bCheckSum += respuesta.StatusPacket[bCount];
+		}
+		bCheckSum = ~bCheckSum;
+		// Si no coincideixen els CheckSums actvem l'error
+		if (respuesta.StatusPacket[bLenght] != bCheckSum) respuesta.tx_err = true;
+	}
 	return respuesta;
 }
 
