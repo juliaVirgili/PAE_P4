@@ -21,7 +21,7 @@
 #include "main.h"
 #include "dyn/dyn_instr.h"
 
-// Number of dynamixel devices to be emulated
+// Number of dynamixel devices (dispositius) to be emulated
 #define N_DEVICES 3
 // Size of the dynamixel memory
 #define DYN_MAX_POS 49
