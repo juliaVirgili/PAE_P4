@@ -20,6 +20,8 @@ typedef enum _dyn_instr_type
 typedef enum _dyn_reg_type
 {
     DYN_REG__LED = 0x19,
+	DYN_REG_MOV_SPEED_L = 0x20,
+    DYN_REG_MOV_SPEED_H = 0x21,
     DYN_REG__MAX = 0x32,
 } DYN_REG_t;
 
