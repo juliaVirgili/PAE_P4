@@ -174,6 +174,7 @@ static void handler(int signum)
 /**
  * Thread to emulate the Dynamixel communication
  */
+// emula modulo dynamixel, se abre un hilo
 void* dyn_emu(void *vargp) {
 	uint8_t i = 0, rx_chk, rx_recv_chk, tmp, tx_chk;
 	bool rx_chk_err;
@@ -195,12 +196,15 @@ void* dyn_emu(void *vargp) {
 	for (i = 0; i < N_DEVICES; ++i) {
 		dyn_mem[i][3] = i;
 	}
+
 	// TODO: Add other fields of interest of the dynamixel registers
+	// para inicializar los valores de la tabla de valores, mientras vayamos probando
+	// cosas cambiar valores
 
 	// Add SIGTERM handler to kill the current thread
 	signal(SIGTERM, handler);
 
-	//Put the semaphore in "green" to start receiving RX data
+	// Put the semaphore in "green" to start receiving RX data
 	sem_post(&sem_tx_cli);
 
 	while (true) {

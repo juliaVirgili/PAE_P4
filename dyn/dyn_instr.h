@@ -19,6 +19,10 @@ typedef enum _dyn_instr_type
 
 typedef enum _dyn_reg_type
 {
+	DYN_REG_CW_ANGLE_LIMIT_L = 0x06,
+	DYN_REG_CW_ANGLE_LIMIT_H = 0x07,
+	DYN_REG_CCW_ANGLE_LIMIT_L = 0x08,
+	DYN_REG_CCW_ANGLE_LIMIT_H = 0x09,
     DYN_REG__LED = 0x19,
 	DYN_REG_MOV_SPEED_L = 0x20,
     DYN_REG_MOV_SPEED_H = 0x21,

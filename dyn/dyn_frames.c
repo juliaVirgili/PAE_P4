@@ -44,6 +44,7 @@ byte TxPacket(byte bID, byte bParameterLength, byte bInstruction,
 	TxBuffer[4] = bInstruction;    //Instrucció que enviem al Mòdul
 
 	//TODO: La instrucció no ha de poder modificar les primeres 5 instruccions
+	// if k si es vol escriure en 0-4 no deixi, a else la resta
 
 	for (bCount = 0; bCount < bParameterLength; bCount++) //Comencem a generar la trama que hem d’enviar
 			{

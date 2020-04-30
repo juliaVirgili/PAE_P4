@@ -5,6 +5,10 @@
 
 #include "main.h"
 #include "dyn/dyn_app_common.h"
+#include "dyn/dyn_app_motors.h"
+#include "dyn/dyn_app_sensor.h"
+#include "dyn/dyn_frames.h"
+#include "dyn/dyn_instr.h"
 #include "dyn_test/dyn_emu.h"
 #include "dyn_test/b_queue.h"
 #include "joystick_emu/joystick.h"
@@ -27,8 +31,11 @@ int main(void)
 	init_queue();
 
 	//Start thread for dynamixel module emulation
-	pthread_create(&tid, NULL, dyn_emu, (void*) &tid); //crea fil per simular la comunicaci� amsb els m�duls dynamixel
+	pthread_create(&tid, NULL, dyn_emu, (void*) &tid); //crea fil per simular la comunicaci� amsb els moduls dynamixel
 	pthread_create(&jid, NULL, joystick_emu, (void*) &jid); //amb el joystick
+
+	//Activem el mode endless turn
+	set_endless_turn_mode();
 
 	//Testing some high level function
 	printf("Setting LED to 0 \n");
@@ -42,6 +49,9 @@ int main(void)
     dyn_led_read(1, &tmp);
     assert(tmp == 1);
 
+    //Testing motors high level function
+    printf("Moure endavant\n");
+    moure_endavant();
 
 	printf("************************\n");
 	printf("Test passed successfully\n");
@@ -52,7 +62,7 @@ int main(void)
 	while(estado != Quit)
 	{
 		/*
-		 * Actualitza el valor de les variables d'estat segons l'�ltima
+		 * Actualitza el valor de les variables d'estat segons l'ultima
 		 * tecla clicada (simulant joystick i botons)
 		 */
 		Get_estado(&estado, &estado_anterior);
