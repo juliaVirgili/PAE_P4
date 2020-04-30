@@ -49,10 +49,13 @@ int main(void)
     dyn_led_read(1, &tmp);
     assert(tmp == 1);
 
+<<<<<<< Updated upstream
     //Testing motors high level function
     printf("Moure endavant\n");
     moure_endavant();
 
+=======
+>>>>>>> Stashed changes
 	printf("************************\n");
 	printf("Test passed successfully\n");
 	printf("Pulsar 'q' para terminar, qualquier tecla para seguir\r");

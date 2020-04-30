@@ -171,6 +171,7 @@ static void handler(int signum)
 	pthread_exit(NULL);
 }
 
+
 /**
  * Thread to emulate the Dynamixel communication
  */

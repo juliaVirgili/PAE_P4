@@ -26,7 +26,7 @@ void TxUAC2_emu(byte bTxdData) {
 	sem_wait(&sem_tx_cli);
 	// Copy data to global var
 	UCA2TXBUF = bTxdData;
-	//printf("%02X ", bTxdData);
+	printf("Cosa X : %02X ", bTxdData);
 	// Signal consumer for new data
 	sem_post(&sem_tx_msp);
 }
