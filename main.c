@@ -35,7 +35,7 @@ int main(void)
 	pthread_create(&jid, NULL, joystick_emu, (void*) &jid); //amb el joystick
 
 	//Activem el mode endless turn
-	set_endless_turn_mode();
+	//set_endless_turn_mode();
 
 	//Testing some high level function
 	printf("Setting LED to 0 \n");
@@ -49,13 +49,11 @@ int main(void)
     dyn_led_read(1, &tmp);
     assert(tmp == 1);
 
-<<<<<<< Updated upstream
+
     //Testing motors high level function
     printf("Moure endavant\n");
     moure_endavant();
 
-=======
->>>>>>> Stashed changes
 	printf("************************\n");
 	printf("Test passed successfully\n");
 	printf("Pulsar 'q' para terminar, qualquier tecla para seguir\r");

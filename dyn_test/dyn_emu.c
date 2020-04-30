@@ -106,6 +106,7 @@ static void tx_byte(uint8_t data) {
 	printf("0x%02X ", data);
 }
 
+
 /**
  * Compute the checksum
  *

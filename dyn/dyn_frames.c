@@ -94,7 +94,7 @@ struct RxReturn RxPacket(void) {
 			bCheckSum += respuesta.StatusPacket[bCount];
 		}
 		bCheckSum = ~bCheckSum;
-		// Si no coincideixen els CheckSums actvem l'error
+		// Si no coincideixen els CheckSums activem l'error
 		if (respuesta.StatusPacket[bLenght] != bCheckSum) respuesta.tx_err = true;
 	}
 	return respuesta;
