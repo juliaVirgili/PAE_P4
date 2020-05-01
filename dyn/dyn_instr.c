@@ -9,6 +9,7 @@
 
 #include "dyn/dyn_instr.h"
 #include "dyn/dyn_frames.h"
+#include <stdio.h>
 
 /**
  * Single byte write instruction

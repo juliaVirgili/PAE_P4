@@ -30,7 +30,7 @@ void moure_endavant() {
 		//si entra ha succeït error
 		printf("Error en moure_endavant roda dreta\n");
 	}
-	direccio = 0;
+	direccio--;
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
 	printf("Estem posant a velocitat %d el motor 2 i a direccio %d\n", velocitat, direccio);
@@ -42,6 +42,26 @@ void moure_endavant() {
 }
 
 void moure_enrere() {
+
+	int velocitat = 0x032;
+		int direccio = 0;
+		uint8_t val[2];
+		val[0] = velocitat & 0xFF;
+		val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+		printf("Estem posant a velocitat %d el motor 1 i a direcció %d\n", velocitat, direccio);
+		//posar roda dreta a velocitat 50 rpm (per ara)
+		if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
+			//si entra ha succeït error
+			printf("Error en moure_enrere roda dreta\n");
+		}
+		direccio = 1;
+		val[0] = velocitat & 0xFF;
+		val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+		printf("Estem posant a velocitat %d el motor 2 i a direccio %d\n", velocitat, direccio);
+		if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
+			//si entra ha succeït error
+			printf("Error en moure_enrere roda esquerra\n");
+		}
 
 }
 

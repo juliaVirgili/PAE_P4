@@ -54,8 +54,10 @@ int main(void)
 
 
     //Testing motors high level function
-    printf("Moure endavant\n");
+    printf("\nMoure endavant\n");
     moure_endavant();
+    printf("\nMoure enrere\n");
+    moure_enrere();
 
 	printf("************************\n");
 	printf("Test passed successfully\n");

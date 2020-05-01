@@ -254,11 +254,16 @@ void* dyn_emu(void *vargp) {
 			break;
 		case FSM_TX__HEADER_1:
 			printf("\n Sending reply\n");
+			tx_byte(*(((uint8_t*) &tx_header) + i++));
 			break;
 		case FSM_TX__HEADER_2:
-		case FSM_TX__ID:
-		case FSM_TX__LEN:
 			tx_byte(*(((uint8_t*) &tx_header) + i++));
+			break;
+		case FSM_TX__ID:
+			tx_byte(tx_header.id);
+			break;
+		case FSM_TX__LEN:
+			tx_byte(tx_header.len);
 			break;
 		case FSM_TX__ERR:
 			tx_byte(tx_header.err);
