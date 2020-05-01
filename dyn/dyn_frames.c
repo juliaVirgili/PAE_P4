@@ -8,6 +8,8 @@
  */
 
 #include "dyn_frames.h"
+#include <stdio.h>
+
 
 #ifndef __MSP432P401R__
 #include "hal_dyn_uart/hal_dyn_uart_emu.h"
@@ -58,7 +60,7 @@ byte TxPacket(byte bID, byte bParameterLength, byte bInstruction,
 	}
 	TxBuffer[bCount] = ~bCheckSum;         //Escriu el Checksum (complement a 1)
 	for (bCount = 0; bCount < bPacketLength; bCount++) //Aquest bucle és el que envia la trama al Mòdul Robot
-			{
+	{
 		f_TxUAC2(TxBuffer[bCount]);
 	}
 	while ((UCA2STATW & UCBUSY)) {

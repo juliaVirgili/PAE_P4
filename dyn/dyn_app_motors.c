@@ -16,12 +16,12 @@ void set_endless_turn_mode() {
 
 }
 
-// Posar les dues rodes en la mateixa velocitat i sentit contrri
+// Posar les dues rodes en la mateixa velocitat i sentit contrari
 void moure_endavant() {
 
 	int velocitat = 0x032;
 	int direccio = 1;
-	uint8_t *val;
+	uint8_t val[2];
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
 	printf("Estem posant a velocitat %d el motor 1 i a direcció %d\n", velocitat, direccio);
@@ -31,8 +31,10 @@ void moure_endavant() {
 		printf("Error en moure_endavant roda dreta\n");
 	}
 	direccio = 0;
-	printf("Estem posant a velocitat %d el motor 0 i a direccio %d\n", velocitat, direccio);
-	if (dyn_write(0, DYN_REG_MOV_SPEED_L, val, 2)) {
+	val[0] = velocitat & 0xFF;
+	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+	printf("Estem posant a velocitat %d el motor 2 i a direccio %d\n", velocitat, direccio);
+	if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en moure_endavant roda esquerra\n");
 	}

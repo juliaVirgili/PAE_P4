@@ -68,7 +68,7 @@ int dyn_read_byte(uint8_t module_id, DYN_REG_t reg_addr, uint8_t* reg_read_val) 
  * @return Error code to be treated at higher levels.
  */
 //SI ELS REGISTRES QUE ES VOLEN MODIFICAR NO SON CONSECUTIUS QUE?? S'HA DE CRIDAR LA FUNCIO DE WRITE BYTE A BYTE?
-int dyn_write(uint8_t module_id, DYN_REG_t reg_addr, uint8_t *val, uint8_t len) {
+bool dyn_write(uint8_t module_id, DYN_REG_t reg_addr, uint8_t *val, uint8_t len) {
 	//TODO: Implement multiposition write
 	// han de ser consecutives
 	uint8_t i;
@@ -76,9 +76,6 @@ int dyn_write(uint8_t module_id, DYN_REG_t reg_addr, uint8_t *val, uint8_t len) 
 	for (i = 0; i < len; i++) {
 		if (dyn_write_byte(module_id, reg_addr + i, val[i])) err = true;
 	}
-
-	//PK RETORNA 255? TÉ A VEURE AMB EL CHECKSUM?
-	//return 255;
 	return err;
 }
 

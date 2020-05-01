@@ -19,6 +19,9 @@ uint8_t estado = Ninguno, estado_anterior = Ninguno, finalizar = 0;
  */
 int main(void)
 {
+
+	setbuf(stdout, NULL);
+
 	pthread_t tid, jid;
 	uint8_t tmp;
 
@@ -38,7 +41,7 @@ int main(void)
 	//set_endless_turn_mode();
 
 	//Testing some high level function
-	printf("Setting LED to 0 \n");
+	/*printf("Setting LED to 0 \n");
     dyn_led_control(1, 0); //estableix en el m�dul amb id (primer par�metre) el valor del segon par�metre
     printf("Getting LED value \n");
     dyn_led_read(1, &tmp); //llegeix el valor del Led i el desa en tmp
@@ -47,7 +50,7 @@ int main(void)
 	dyn_led_control(1, 1);
 	printf("Getting LED value \n");
     dyn_led_read(1, &tmp);
-    assert(tmp == 1);
+    assert(tmp == 1);*/
 
 
     //Testing motors high level function

@@ -90,6 +90,7 @@ static uint8_t recv_byte() {
 	return tmp_byte;
 }
 
+
 /**
  * Function to send a single byte using the thread-safe queue
  *
@@ -141,7 +142,7 @@ bool rx_chk_err, status_pckt_header_t *tx_header, uint8_t *tx_buff) {
 	tx_header->id = rx_header.id;
 	if (rx_chk_err) {
 		tx_header->err = ERR_CHKSUM;
-		tx_header->len = 2;
+		tx_header->len = 3;
 		return;
 	} else {
 		tx_header->err = 0;
@@ -149,13 +150,13 @@ bool rx_chk_err, status_pckt_header_t *tx_header, uint8_t *tx_buff) {
 
 	switch (rx_header.instr) {
 	case DYN_INSTR__READ:
-		memcpy(tx_buff, &dyn_mem[rx_header.id][rx_buff[0]], rx_buff[1]);
-		tx_header->len = rx_buff[1] + 2;
+		memcpy(tx_buff, &dyn_mem[rx_header.id - 1][rx_buff[0]], rx_buff[1]);
+		tx_header->len = rx_buff[1] + 3;
 		break;
 	case DYN_INSTR__WRITE:
-		memcpy(&dyn_mem[rx_header.id][rx_buff[0]], &rx_buff[1],
-				rx_header.len - 2);
-		tx_header->len = 2;
+		memcpy(&dyn_mem[rx_header.id - 1][rx_buff[0]], &rx_buff[1],
+				rx_header.len - 3);
+		tx_header->len = 3;
 		break;
 	default:
 		printf("ERR: Undefined state reached while decoding frame");
@@ -195,9 +196,10 @@ void* dyn_emu(void *vargp) {
 	memcpy(&tx_header.header, &dyn_header, sizeof(tx_header.header));
 
 	// Initialize the ID field of the dynamixel
-	for (i = 0; i < N_DEVICES; ++i) {
-		dyn_mem[i][3] = i;
+	for (i = 1; i <= N_DEVICES; ++i) {
+		dyn_mem[i - 1][3] = i;
 	}
+
 
 	// TODO: Add other fields of interest of the dynamixel registers
 	// para inicializar los valores de la tabla de valores, mientras vayamos probando
@@ -213,6 +215,8 @@ void* dyn_emu(void *vargp) {
 		switch (fsm_state) {
 		case FSM_RX__HEADER_1:
 			printf("\n Waiting for new packet\n");
+			tmp = recv_byte();
+			assert(tmp == 0xFF);
 			break;
 		case FSM_RX__HEADER_2:
 			tmp = recv_byte();
@@ -221,7 +225,7 @@ void* dyn_emu(void *vargp) {
 		case FSM_RX__ID:
 			rx_header.id = recv_byte();
 			// Check the ID is valid for the defined memories
-			assert(rx_header.id <= N_DEVICES);
+			assert(rx_header.id - 1 <= N_DEVICES);
 			break;
 		case FSM_RX__LEN:
 			rx_header.len = recv_byte();
