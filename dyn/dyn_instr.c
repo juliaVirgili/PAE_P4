@@ -75,7 +75,7 @@ bool dyn_write(uint8_t module_id, DYN_REG_t reg_addr, uint8_t *val, uint8_t len)
 	uint8_t i;
 	bool err = false;
 	for (i = 0; i < len; i++) {
-		if (dyn_write_byte(module_id, reg_addr + i, val[i])) err = true;
+		if (!dyn_write_byte(module_id, reg_addr + i, val[i])) err = true;
 	}
 	return err;
 }

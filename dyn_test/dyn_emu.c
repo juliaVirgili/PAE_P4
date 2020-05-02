@@ -142,7 +142,7 @@ bool rx_chk_err, status_pckt_header_t *tx_header, uint8_t *tx_buff) {
 	tx_header->id = rx_header.id;
 	if (rx_chk_err) {
 		tx_header->err = ERR_CHKSUM;
-		tx_header->len = 3;
+		tx_header->len = 2;
 		return;
 	} else {
 		tx_header->err = 0;
@@ -151,12 +151,13 @@ bool rx_chk_err, status_pckt_header_t *tx_header, uint8_t *tx_buff) {
 	switch (rx_header.instr) {
 	case DYN_INSTR__READ:
 		memcpy(tx_buff, &dyn_mem[rx_header.id - 1][rx_buff[0]], rx_buff[1]);
-		tx_header->len = rx_buff[1] + 3;
+		tx_header->len = rx_buff[1] + 2;
 		break;
 	case DYN_INSTR__WRITE:
+		printf("WRITE: %d\n:", rx_header.id - 1);
 		memcpy(&dyn_mem[rx_header.id - 1][rx_buff[0]], &rx_buff[1],
-				rx_header.len - 3);
-		tx_header->len = 3;
+				rx_header.len - 2);
+		tx_header->len = 2;
 		break;
 	default:
 		printf("ERR: Undefined state reached while decoding frame");
@@ -171,6 +172,21 @@ bool rx_chk_err, status_pckt_header_t *tx_header, uint8_t *tx_buff) {
 static void handler(int signum)
 {
 	pthread_exit(NULL);
+}
+
+
+void print_taula_valors(int id) {
+	printf("\n");
+	printf("PRINT ID:%d\n", id);
+	printf("%X\t",dyn_mem[id][6]);
+	printf("%X\t",dyn_mem[id][7]);
+	printf("%X\t",dyn_mem[id][8]);
+	printf("%X\t",dyn_mem[id][9]);
+	printf("%X\t",dyn_mem[id][25]);
+	printf("%X\t",dyn_mem[id][32]);
+	printf("%X\t",dyn_mem[id][33]);
+	printf("%X\t",dyn_mem[id][50]);
+	printf("\n");
 }
 
 
@@ -200,8 +216,10 @@ void* dyn_emu(void *vargp) {
 		dyn_mem[i - 1][3] = i;
 	}
 
-
 	// TODO: Add other fields of interest of the dynamixel registers
+	// Inicialitzem la velocitat a 0
+
+
 	// para inicializar los valores de la tabla de valores, mientras vayamos probando
 	// cosas cambiar valores
 
@@ -210,6 +228,8 @@ void* dyn_emu(void *vargp) {
 
 	// Put the semaphore in "green" to start receiving RX data
 	sem_post(&sem_tx_cli);
+
+	uint8_t id = 0;
 
 	while (true) {
 		switch (fsm_state) {
@@ -225,7 +245,8 @@ void* dyn_emu(void *vargp) {
 		case FSM_RX__ID:
 			rx_header.id = recv_byte();
 			// Check the ID is valid for the defined memories
-			assert(rx_header.id - 1 <= N_DEVICES);
+			assert(rx_header.id - 1 < N_DEVICES);
+			id = (int) rx_header.id;
 			break;
 		case FSM_RX__LEN:
 			rx_header.len = recv_byte();
@@ -261,6 +282,7 @@ void* dyn_emu(void *vargp) {
 			break;
 		case FSM_TX__ID:
 			tx_byte(tx_header.id);
+			assert(tx_header.id - 1 < N_DEVICES);
 			break;
 		case FSM_TX__LEN:
 			tx_byte(tx_header.len);
@@ -275,6 +297,8 @@ void* dyn_emu(void *vargp) {
 		case FSM_TX__CHKSM:
 			tx_chk = calc_chk_sum((uint8_t*) &tx_header, tx_buff);
 			tx_byte(tx_chk);
+			// Imprimim la taula de valors dels tres mòduls
+			//print_taula_valors(id);
 			break;
 		default:
 			printf("ERR: Undefined state reached while RX/TX frame");
