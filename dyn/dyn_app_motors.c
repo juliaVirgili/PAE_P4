@@ -26,7 +26,7 @@ void moure_endavant() {
 	uint8_t val[2];
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
-	printf("Estem posant a velocitat %d el motor 1 i a direcció %d\n", velocitat, direccio);
+	printf("\nEstem posant a velocitat %d el motor 1 i a direcció %d\n", velocitat, direccio);
 	//posar roda dreta a velocitat 50 rpm (per ara)
 	if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
@@ -35,7 +35,7 @@ void moure_endavant() {
 	direccio = 0;
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
-	printf("Estem posant a velocitat %d el motor 2 i a direccio %d\n", velocitat, direccio);
+	printf("\nEstem posant a velocitat %d el motor 2 i a direccio %d\n", velocitat, direccio);
 	if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en moure_endavant roda esquerra\n");
@@ -50,7 +50,7 @@ void moure_enrere() {
 	uint8_t val[2];
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
-	printf("Estem posant a velocitat %d el motor 1 i a direcció %d\n", velocitat, direccio);
+	printf("\nEstem posant a velocitat %d el motor 1 i a direcció %d\n", velocitat, direccio);
 	//posar roda dreta a velocitat 50 rpm (per ara)
 	if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
@@ -59,7 +59,7 @@ void moure_enrere() {
 	direccio = 1;
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
-	printf("Estem posant a velocitat %d el motor 2 i a direccio %d\n", velocitat, direccio);
+	printf("\nEstem posant a velocitat %d el motor 2 i a direccio %d\n", velocitat, direccio);
 	if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en moure_enrere roda esquerra\n");
@@ -85,7 +85,7 @@ void moure_dreta() {
 
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
-	printf("Posem roda 2 a velocitat 50 i direcció contrària a la roda 1\n");
+	printf("\nPosem roda 2 a velocitat 50 i direcció contrària a la roda 1\n");
 	if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en moure_dreta\n");
@@ -127,12 +127,14 @@ void tirabuixo() {
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
 
 	//roda dreta
+	printf("\nPosa roda 1 a velocitat 50 i direcció 1\n");
 	if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en tirabuixo\n");
 	}
 
 	//roda esquerra
+	printf("\nPosa roda 2 a velocitat 50 i direcció 1\n");
 	if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en tirabuixo\n");
@@ -154,20 +156,20 @@ int augmentar_velocitat(int idd) {
 	val[1] = 0;
 
 	//llegir velocitat i direcció de mòdul id
-	printf("Llegim la velocitat i direcció de la roda %d\n", id);
+	printf("\nLlegim la velocitat i direcció de la roda %d\n", id);
 	dyn_read_byte(id, DYN_REG_MOV_SPEED_L, &val[0]);
 	dyn_read_byte(id, DYN_REG_MOV_SPEED_H, &val[1]);
 	direccio = val[1];
-	direccio &= 4;
-	val[1] &= 3;
+	direccio &= 0x04;
+	direccio = direccio >> 2;
+	val[1] &= 0x03;
 	velocitat = val[0] + (val[1] << 8);
 
 	//enviar nova velocitat pel mòdul id
 	velocitat += 0xA;
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
-
-	printf("Posem la roda %d a velocitat +10 i mateixa direcció\n", id);
+	printf("\nPosem la roda %d a velocitat +10 i mateixa direcció\n", id);
 	if (dyn_write(id, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en augmentar_velocitat de roda %d\n", id);
@@ -195,6 +197,7 @@ int disminuir_velocitat(int idd) {
 	dyn_read_byte(id, DYN_REG_MOV_SPEED_H, &val[1]);
 	direccio = val[1];
 	direccio &= 4;
+	direccio = direccio >> 2;
 	val[1] &= 3;
 	velocitat = val[0] + (val[1] << 8);
 
@@ -202,6 +205,7 @@ int disminuir_velocitat(int idd) {
 	velocitat -= 0xA;
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+	printf("\nPosem la roda %d a velocitat -10 i mateixa direcció\n", id);
 	if (dyn_write(id, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en disminuir_velocitat de roda %d\n", id);
@@ -219,12 +223,14 @@ void parar() {
 	val[1] = 0;
 
 	//roda dreta
+	printf("\nPosa la roda 1 a velocitat i direcció 0\n");
 	if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en parar\n");
 	}
 
 	//roda esquerra
+	printf("\nPosa la roda 2 a velocitat i direcció 0\n");
 	if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
 		//si entra ha succeït error
 		printf("Error en parar\n");

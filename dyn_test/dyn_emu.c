@@ -178,14 +178,15 @@ void print_taula_valors(int id) {
 	id--;
 	printf("\n");
 	printf("ID:%d\n", id);
-	printf("%X\t",dyn_mem[id][6]);
-	printf("%X\t",dyn_mem[id][7]);
-	printf("%X\t",dyn_mem[id][8]);
-	printf("%X\t",dyn_mem[id][9]);
-	printf("%X\t",dyn_mem[id][25]);
-	printf("%X\t",dyn_mem[id][32]);
-	printf("%X\t",dyn_mem[id][33]);
-	printf("%X\t",dyn_mem[id][50]);
+	if (id == 0 | id == 1) {
+		printf("\nMov speed L: %X\t",dyn_mem[id][0x32]);
+		printf("Mov speed H: %X\t",dyn_mem[id][0x33]);
+	} else {
+		printf("\n Esquerra: %X\t",dyn_mem[id][0x1A]);
+		printf("Frontal: %X\t",dyn_mem[id][0x1B]);
+		printf("Dreta: %X\t",dyn_mem[id][0x1C]);
+	}
+
 	printf("\n");
 }
 
@@ -217,7 +218,15 @@ void* dyn_emu(void *vargp) {
 	}
 
 	// TODO: Add other fields of interest of the dynamixel registers
-	// Inicialitzem la velocitat a 0
+	// Inicialitzem la velocitat a 50 i que vagi endavant
+	dyn_mem[0][0x32] = 0x32;
+	dyn_mem[0][0x33] = 0x04;
+	dyn_mem[1][0x32] = 0x32;
+	dyn_mem[1][0x33] = 0x00;
+	// Inicialitzem els valors de la taula corresponens a les distàncies
+	dyn_mem[2][0x1A] = 0x50;
+	dyn_mem[2][0x1B] = 0x2C;
+	dyn_mem[2][0x1C] = 0x0E;
 
 
 	// para inicializar los valores de la tabla de valores, mientras vayamos probando

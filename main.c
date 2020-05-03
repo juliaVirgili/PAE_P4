@@ -24,6 +24,7 @@ int main(void)
 
 	pthread_t tid, jid;
 	uint8_t tmp;
+	bool direccio = true;
 
 	//Init semaphores for TX data handshake
 	//inicialitza els dos objectes sem�for amb el valor 0, en vermell
@@ -52,22 +53,34 @@ int main(void)
     dyn_led_read(1, &tmp);
     assert(tmp == 1);*/
 
-	//TODO: Falta inicialitzar velocitat a 0x32
-    //Testing motors high level function
-    //printf("\nMoure endavant!\n");
-    //moure_endavant();
-    //printf("\nMoure enrere!\n");
-    //moure_enrere();
-    //printf("\nMoure dreta\n");
-    //moure_dreta();
-    //moure_esquerra();
-    //tirabuixo();
+	//TODO: Falta inicialitzar velocitat a 0
+    /*Testing motors high level function
+    printf("\nMoure endavant!\n");
+    moure_endavant();
+    printf("\nMoure enrere!\n");
+    moure_enrere();
+    printf("\nMoure dreta!\n");
+    moure_dreta();
+	printf("\nMoure esquerra!\n");
+    moure_esquerra();
+	printf("\nTirabuixo!\n");
+    tirabuixo();
 	printf("\nAugmentar velocitat!\n");
     augmentar_velocitat(1);
-    //disminuir_velocitat(1);
-    //parar();
-    //accelerar();
-    //frenar();
+	printf("\nDisminuir velocitat!\n");
+    disminuir_velocitat(1);
+	printf("\nParar!\n");
+    parar();
+	printf("\nAccelerar!\n");
+    accelerar();
+	printf("\nFrenar!\n");
+    frenar();*/
+
+	// Testing sensor high level function
+	printf("\nLlegir valors sensor\n");
+	assert(distancia_frontal() == 0x2C);
+	assert(distancia_esquerra() == 0x50);
+	assert(distancia_dreta() == 0x0E);
 
 	printf("************************\n");
 	printf("Test passed successfully\n");
@@ -89,15 +102,43 @@ int main(void)
 			fflush(stdout);
 			switch(estado){
 			case Sw1:
-				printf("Boton Sw1 ('a') apretado\n");
+				if(direccio) {
+					printf("\nMoure enrere!\n");
+					moure_enrere();
+					direccio = false;
+				} else {
+					printf("\nMoure endavant!\n");
+					moure_endavant();
+					direccio = true;
+				}
 				break;
 			case Sw2:
-				printf("Boton Sw2 ('s') apretado\n");
+				printf("\nParar!\n");
+				parar();
+				break;
+			case Up:
+				printf("\nAccelerar!\n");
+				accelerar();
+				break;
+			case Center:
+				printf("\nTirabuixo!\n");
+				tirabuixo();
+				break;
+			case Left:
+				printf("\nMoure esquerra!\n");
+				moure_esquerra();
+				break;
+			case Right:
+				printf("\nMoure dreta!\n");
+				moure_dreta();
+				break;
+			case Down:
+				printf("\nFrenar!\n");
+				frenar();
 				break;
 			case Quit:
 				printf("Adios!\n");
 				break;
-			//etc, etc...
 			}
 			fflush(stdout);
 		}

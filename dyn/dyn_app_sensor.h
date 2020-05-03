@@ -8,8 +8,10 @@
 #ifndef DYN_SENSOR_H_
 #define DYN_SENSOR_H_
 
+uint8_t distancia_frontal();
 
+uint8_t distancia_esquerra();
 
-
+uint8_t distancia_dreta();
 
 #endif /* DYN_SENSOR_H_ */
