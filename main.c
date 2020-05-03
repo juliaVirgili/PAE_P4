@@ -52,12 +52,22 @@ int main(void)
     dyn_led_read(1, &tmp);
     assert(tmp == 1);*/
 
-
+	//TODO: Falta inicialitzar velocitat a 0x32
     //Testing motors high level function
-    printf("\nMoure endavant\n");
-    moure_endavant();
-    printf("\nMoure enrere\n");
-    moure_enrere();
+    //printf("\nMoure endavant!\n");
+    //moure_endavant();
+    //printf("\nMoure enrere!\n");
+    //moure_enrere();
+    //printf("\nMoure dreta\n");
+    //moure_dreta();
+    //moure_esquerra();
+    //tirabuixo();
+	printf("\nAugmentar velocitat!\n");
+    augmentar_velocitat(1);
+    //disminuir_velocitat(1);
+    //parar();
+    //accelerar();
+    //frenar();
 
 	printf("************************\n");
 	printf("Test passed successfully\n");

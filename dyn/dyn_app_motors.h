@@ -14,8 +14,10 @@ void moure_enrere();
 void moure_dreta();
 void moure_esquerra();
 void tirabuixo();
-void augmentar_velocitat();
-void disminuir_velocitat();
+int augmentar_velocitat(int);
+int disminuir_velocitat(int);
 void parar();
+void accelerar();
+void frenar();
 
 #endif /* DYN_DYN_APP_MOTORS_H_ */

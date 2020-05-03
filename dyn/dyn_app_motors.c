@@ -67,39 +67,190 @@ void moure_enrere() {
 
 }
 
+/*
+ * Augmentem 10 rpm la velocitat de la roda esquerra i mantenim la direcció.
+ * Posem la roda dreta en direcció contrària a la de la esquerra i a velocitat "base" (50 rpm).
+ */
 void moure_dreta() {
-
-	// Llegir velocitat de la mamoria i assignar a una variable
-	int velocitat = augmentar_velocitat()
-	// L
-
-}
-
-void moure_esquerra() {
-
-}
-
-// Girar sobre ell mateix (mateixa velocitat i sentit diferent)
-void tirabuixo() {
-
-}
-
-void augmentar_velocitat(uint8_t id) {
-
+	int velocitat = 0x32, direccio;
 	uint8_t val[2];
-	dyn_read_byte(id, DYN_REG_MOV_SPEED_L, val[0]);
-	dyn_read_byte(id, DYN_REG_MOV_SPEED_H, val[1]);
-	int dir = val[1];
-	dir &= 4;
+
+	// Augmenta velocitat de la roda esquerra (id 2)
+	direccio = augmentar_velocitat(2);
+
+	//enviar velocitat "base" a la roda dreta per assegurar que es mantingui en aquesta
+	//la posem a direcció contrària a la de la esquerra per que segueixi el robot en la direcció que estava
+	if (direccio == 1) direccio = 0;
+	else direccio = 1;
+
+	val[0] = velocitat & 0xFF;
+	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+	printf("Posem roda 2 a velocitat 50 i direcció contrària a la roda 1\n");
+	if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
+		//si entra ha succeït error
+		printf("Error en moure_dreta\n");
+	}
+}
+
+/*
+ * Augmentem 10 rpm la velocitat de la roda dreta i mantenim la direcció.
+ * Posem la roda esquerra en direcció contrària a la de la dreta i a velocitat "base" (50 rpm).
+ */
+void moure_esquerra() {
+	int velocitat = 0x32, direccio;
+	uint8_t val[2];
+
+	// Augmenta velocitat de la roda dreta (id 1)
+	direccio = augmentar_velocitat(1);
+
+	//enviar velocitat "base" a la roda esquerra per assegurar que es mantingui en aquesta
+	//la posem a direcció contrària a la de la dreta per que segueixi el robot en la direcció que estava
+	if (direccio == 1) direccio = 0;
+	else direccio = 1;
+
+	val[0] = velocitat & 0xFF;
+	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+	if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
+		//si entra ha succeït error
+		printf("Error en moure_esquerra\n");
+	}
+}
+
+/*
+ * Girar sobre ell mateix en sentit horari a velocitat 50 rpm i direcció 1 les dues rodes
+ */
+void tirabuixo() {
+	int direccio = 1, velocitat = 0x32;
+	uint8_t val[2];
+
+	val[0] = velocitat & 0xFF;
+	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+
+	//roda dreta
+	if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
+		//si entra ha succeït error
+		printf("Error en tirabuixo\n");
+	}
+
+	//roda esquerra
+	if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
+		//si entra ha succeït error
+		printf("Error en tirabuixo\n");
+	}
+}
+
+/*
+ * Llegeix de la memòria del mòdul id els dos bytes corresponents a velocitat i direcció
+ * i els desa en val per a descodificar-los a posteriori. Suma 10 a la velocitat i envia un
+ * StatusPacket per a actualitzar-la.
+ * Retorna la direcció del mòdul amb id.
+ */
+int augmentar_velocitat(int idd) {
+	uint8_t id = (uint8_t) idd;
+	int direccio, velocitat;
+	uint8_t val[2];
+
+	val[0] = 0;
+	val[1] = 0;
+
+	//llegir velocitat i direcció de mòdul id
+	printf("Llegim la velocitat i direcció de la roda %d\n", id);
+	dyn_read_byte(id, DYN_REG_MOV_SPEED_L, &val[0]);
+	dyn_read_byte(id, DYN_REG_MOV_SPEED_H, &val[1]);
+	direccio = val[1];
+	direccio &= 4;
 	val[1] &= 3;
-	int velocitat = val[0] + val[1]<<8;
+	velocitat = val[0] + (val[1] << 8);
 
+	//enviar nova velocitat pel mòdul id
+	velocitat += 0xA;
+	val[0] = velocitat & 0xFF;
+	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+
+	printf("Posem la roda %d a velocitat +10 i mateixa direcció\n", id);
+	if (dyn_write(id, DYN_REG_MOV_SPEED_L, val, 2)) {
+		//si entra ha succeït error
+		printf("Error en augmentar_velocitat de roda %d\n", id);
+	}
+
+	return direccio;
 }
 
-void disminuir_velocitat() {
+/*
+ * Llegeix de la memòria del mòdul id els dos bytes corresponents a velocitat i direcció
+ * i els desa en val per a descodificar-los a posteriori. Resta 10 a la velocitat i envia un
+ * StatusPacket per a actualitzar-la.
+ * Retorna la direcció del mòdul amb id.
+ */
+int disminuir_velocitat(int idd) {
+	uint8_t id = (uint8_t) idd;
+	int direccio, velocitat;
+	uint8_t val[2];
 
+	val[0] = 0;
+	val[1] = 0;
+
+	//llegir velocitat i direcció de mòdul id
+	dyn_read_byte(id, DYN_REG_MOV_SPEED_L, &val[0]);
+	dyn_read_byte(id, DYN_REG_MOV_SPEED_H, &val[1]);
+	direccio = val[1];
+	direccio &= 4;
+	val[1] &= 3;
+	velocitat = val[0] + (val[1] << 8);
+
+	//enviar nova velocitat pel mòdul id
+	velocitat -= 0xA;
+	val[0] = velocitat & 0xFF;
+	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
+	if (dyn_write(id, DYN_REG_MOV_SPEED_L, val, 2)) {
+		//si entra ha succeït error
+		printf("Error en disminuir_velocitat de roda %d\n", id);
+	}
+
+	return direccio;
 }
 
+/*
+ * Posa a velocitat i direcció 0 les dues rodes.
+ */
 void parar() {
+	uint8_t val[2];
+	val[0] = 0;
+	val[1] = 0;
+
+	//roda dreta
+	if (dyn_write(1, DYN_REG_MOV_SPEED_L, val, 2)) {
+		//si entra ha succeït error
+		printf("Error en parar\n");
+	}
+
+	//roda esquerra
+	if (dyn_write(2, DYN_REG_MOV_SPEED_L, val, 2)) {
+		//si entra ha succeït error
+		printf("Error en parar\n");
+	}
+}
+
+/*
+ * Augmenta 10 rpm la velocitat d'ambdues rodes i en manté les direccions.
+ */
+void accelerar() {
+	// Augmenta velocitat de la roda dreta (id 1)
+	augmentar_velocitat(1);
+
+	// Augmenta velocitat de la roda esquerra (id 2)
+	augmentar_velocitat(2);
+
+}
+
+/*
+ * Disminueix 10 rpm la velocitat d'ambdues rodes i en manté les direccions.
+ */
+void frenar() {
+	//disminueix velocitat de la roda dreta (id 1)
+	disminuir_velocitat(1);
+
+	//disminueix velocitat de la roda esquerra (id 2)
+	disminuir_velocitat(2);
 
 }

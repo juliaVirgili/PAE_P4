@@ -154,7 +154,6 @@ bool rx_chk_err, status_pckt_header_t *tx_header, uint8_t *tx_buff) {
 		tx_header->len = rx_buff[1] + 2;
 		break;
 	case DYN_INSTR__WRITE:
-		printf("WRITE: %d\n:", rx_header.id - 1);
 		memcpy(&dyn_mem[rx_header.id - 1][rx_buff[0]], &rx_buff[1],
 				rx_header.len - 2);
 		tx_header->len = 2;
@@ -176,8 +175,9 @@ static void handler(int signum)
 
 
 void print_taula_valors(int id) {
+	id--;
 	printf("\n");
-	printf("PRINT ID:%d\n", id);
+	printf("ID:%d\n", id);
 	printf("%X\t",dyn_mem[id][6]);
 	printf("%X\t",dyn_mem[id][7]);
 	printf("%X\t",dyn_mem[id][8]);
@@ -298,7 +298,7 @@ void* dyn_emu(void *vargp) {
 			tx_chk = calc_chk_sum((uint8_t*) &tx_header, tx_buff);
 			tx_byte(tx_chk);
 			// Imprimim la taula de valors dels tres mòduls
-			//print_taula_valors(id);
+			print_taula_valors(id);
 			break;
 		default:
 			printf("ERR: Undefined state reached while RX/TX frame");
