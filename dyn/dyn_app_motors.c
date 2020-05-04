@@ -8,13 +8,13 @@
 #include <stdio.h>
 #include "dyn_instr.h"
 
-#define velocitat_inicial;
-
 // Per a la millor fluidesa dels motors, posem a 0 els registres corresponents als angles
 void set_endless_turn_mode() {
 
-	dyn_write(1, DYN_REG_CW_ANGLE_LIMIT_L, 0, 4);
-	dyn_write(0, DYN_REG_CW_ANGLE_LIMIT_L, 0, 4);
+	uint8_t val = 0;
+
+	dyn_write(2, DYN_REG_CW_ANGLE_LIMIT_L, &val, 4);
+	dyn_write(1, DYN_REG_CW_ANGLE_LIMIT_L, &val, 4);
 
 }
 
@@ -166,7 +166,7 @@ int augmentar_velocitat(int idd) {
 	velocitat = val[0] + (val[1] << 8);
 
 	//enviar nova velocitat pel mòdul id
-	velocitat += 0xA;
+	if (velocitat == 0x3FF - 0x0A) velocitat += 0xA;
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
 	printf("\nPosem la roda %d a velocitat +10 i mateixa direcció\n", id);
@@ -202,7 +202,7 @@ int disminuir_velocitat(int idd) {
 	velocitat = val[0] + (val[1] << 8);
 
 	//enviar nova velocitat pel mòdul id
-	velocitat -= 0xA;
+	if (velocitat >= 0x0B)velocitat -= 0xA;
 	val[0] = velocitat & 0xFF;
 	val[1] = ((direccio << 2) & 0x04) | ((velocitat >> 8) & 0x03);
 	printf("\nPosem la roda %d a velocitat -10 i mateixa direcció\n", id);

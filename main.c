@@ -39,7 +39,7 @@ int main(void)
 	pthread_create(&jid, NULL, joystick_emu, (void*) &jid); //amb el joystick
 
 	//Activem el mode endless turn
-	//set_endless_turn_mode();
+	set_endless_turn_mode();
 
 	//Testing some high level function
 	/*printf("Setting LED to 0 \n");
